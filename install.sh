@@ -66,38 +66,13 @@ echo ""
 read -p "Enter your CONTEXT7_API_KEY (or press Enter to skip): " CONTEXT7_KEY
 
 if [ -n "$CONTEXT7_KEY" ]; then
-    # Detect shell configuration file
-    SHELL_CONFIG=""
-    if [ -f "$HOME/.zshrc" ]; then
-        SHELL_CONFIG="$HOME/.zshrc"
-    elif [ -f "$HOME/.bashrc" ]; then
-        SHELL_CONFIG="$HOME/.bashrc"
-    elif [ -f "$HOME/.bash_profile" ]; then
-        SHELL_CONFIG="$HOME/.bash_profile"
-    fi
-
-    if [ -n "$SHELL_CONFIG" ]; then
-        # Check if CONTEXT7_API_KEY already exists in shell config
-        if grep -q "export CONTEXT7_API_KEY=" "$SHELL_CONFIG" 2>/dev/null; then
-            echo -e "${YELLOW}Updating existing CONTEXT7_API_KEY in $SHELL_CONFIG${NC}"
-            # Use sed to replace existing value (macOS compatible)
-            sed -i '' "s|export CONTEXT7_API_KEY=.*|export CONTEXT7_API_KEY=\"$CONTEXT7_KEY\"|" "$SHELL_CONFIG"
-        else
-            echo -e "${GREEN}Adding CONTEXT7_API_KEY to $SHELL_CONFIG${NC}"
-            echo "" >> "$SHELL_CONFIG"
-            echo "# Context7 API Key for opencode" >> "$SHELL_CONFIG"
-            echo "export CONTEXT7_API_KEY=\"$CONTEXT7_KEY\"" >> "$SHELL_CONFIG"
-        fi
-        echo -e "${YELLOW}Run 'source $SHELL_CONFIG' or restart your terminal to apply changes${NC}"
-    else
-        echo -e "${YELLOW}Could not detect shell config file.${NC}"
-        echo "Add this to your shell profile manually:"
-        echo "  export CONTEXT7_API_KEY=\"$CONTEXT7_KEY\""
-    fi
+    echo -e "${GREEN}Updating CONTEXT7_API_KEY in opencode.json${NC}"
+    # Replace the placeholder with the actual API key in opencode.json (macOS compatible)
+    sed -i '' "s|\\\$CONTEXT7_API_KEY|$CONTEXT7_KEY|g" "$CONFIG_DIR/opencode.json"
 else
     echo -e "${YELLOW}Skipped Context7 API key configuration.${NC}"
-    echo "You can set it later by adding to your shell profile:"
-    echo "  export CONTEXT7_API_KEY=\"your-api-key\""
+    echo "You can set it later by editing: $CONFIG_DIR/opencode.json"
+    echo "Replace '\$CONTEXT7_API_KEY' with your actual API key"
 fi
 
 echo ""
